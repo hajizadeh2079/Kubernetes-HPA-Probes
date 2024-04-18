@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weaviate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weaviate
+  template:
+    metadata:
+      labels:
+        app: weaviate
+    spec:
+      containers:
+      - name: weaviate
+        image: hajizadeh2079/weaviate
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            memory: "128Mi"         # Request 128Mi of memory
+            cpu: "250m"             # Request 250 milliCPU (0.25 CPU)
+        livenessProbe:
+          httpGet:                  # Use HTTP GET request for liveness probe
+            path: /health           # Endpoint to check the health of the application
+            port: 5000              # Port to send the HTTP request to
+          initialDelaySeconds: 10   # Wait 10 seconds before starting the probe
+          timeoutSeconds: 1         # Timeout after 1 seconds if the probe doesn't receive a response
+          periodSeconds: 10         # Check the health every 10 seconds
+          successThreshold: 1       # Consider the probe successful after one successful check
+          failureThreshold: 3       # Consider the probe failed after three consecutive failures
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weaviate
+spec:
+  selector:
+    app: weaviate
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000

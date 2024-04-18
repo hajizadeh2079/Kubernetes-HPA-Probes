@@ -33,7 +33,7 @@ Install Docker ([Installation Guide](https://docs.docker.com/engine/install/ubun
    - `watch "kubectl get pod"`
    - `watch "kubectl top pod"`
    - `watch "kubectl describe hpa weaviate-hpa"`
-   - `watch "kubectl describe pod {pod_name}"`
+   - `kubectl describe pod {pod_name}`
 
 ### Liveness Probe
 
@@ -41,7 +41,7 @@ To simulate an unhealthy situation, use the following command to put the instanc
 ```bash
 curl http://localhost:5000/set_health_false
 ```
-Using `kubectl describe pod {pod_name}`, observe that the liveness check of Kubernetes is failing, and Kubernetes detects that the instance is unhealthy. Eventually, Kubernetes will restart the instance. Using `kubectl get pod`, you can see that the instance has been restarted.
+Using `kubectl describe pod {pod_name}`, observe that the liveness check of Kubernetes is failing, and Kubernetes detects that the instance is unhealthy. Eventually, Kubernetes will restart the instance. Using `watch "kubectl get pod"`, you can see that the instance has been restarted.
 
 *Note*: In addition to liveness probe, there are two other probes in Kubernetes, readiness and startup. For more details, see [Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/).
 
@@ -52,7 +52,7 @@ To simulate CPU/memory usage increase, use one of the following commands (you ca
 curl -m 0 http://localhost:5000/increase_memory
 curl -m 0 http://localhost:5000/increase_cpu
 ```
-Using `watch "kubectl describe hpa weaviate-hpa"`, you can see that HPA detects that CPU/memory usage is above the threshold and scales up the number of instances. When the usage is far below the threshold, HPA scales down the number of instances. HPA will wait for 5 minutes before scaling down the number of instances. Using `kubectl get pod`, you can see the creation/deletion of instances in the whole process.
+Using `watch "kubectl describe hpa weaviate-hpa"`, you can see that HPA detects that CPU/memory usage is above the threshold and scales up the number of instances. When the usage is far below the threshold, HPA scales down the number of instances. HPA will wait for 5 minutes before scaling down the number of instances. Using `watch "kubectl get pod"`, you can see the creation/deletion of instances in the whole process.
 
 *Some Notes*:
 - Both scale down and up speed are configurable in Kubernetes, using scaling policies. For more details, see [Scaling Policies](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#scaling-policies).
